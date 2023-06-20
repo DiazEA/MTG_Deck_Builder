@@ -308,6 +308,11 @@ def add_card_to_deck(card_inc):
         print('This card already exists or doesnt match you color identity')    
         card_inc = add_card(card_index, card_inc)
     return card_inc
+
+def create_csv():
+    deck_name = input('Enter the name of the deck')
+    print('exporting to csv file...')
+    deck.to_csv('{}.csv'.format(deck_name))
        
  
 choice = main_menu()
@@ -333,6 +338,8 @@ if choice == "1":
     print(card_inc)
     print("you have {} card slots remaining for the rest of your deck.".format(deck_size))
     card_inc = add_card_to_deck(card_inc)
+    create_csv()
+    
     
     
 else:
