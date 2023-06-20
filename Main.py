@@ -62,10 +62,11 @@ def add_land_to_deck(card_index, land_inc):
     toughness = df.at[card_index, 'toughness']
     commander = False
     mana_cost = df.at[card_index, 'manaCost']
+    converted_mana_cost = df.at[card_index, 'convertedManaCost']
     color_identity = df.at[card_index, 'colorIdentity']
     deck.loc[index_slot, ['Name', 'Description', 'Type', 'Sub-type',
-                 'Power', 'Toughness', 'Commander', 'Mana_Cost',
-                 'Color_Identity']] = [name, description, type, card_type, power, toughness,commander, mana_cost, color_identity]
+                 'Power', 'Toughness', 'Commander', 'Mana_Cost', "CMC",
+                 'Color_Identity']] = [name, description, type, card_type, power, toughness,commander, mana_cost, converted_mana_cost, color_identity]
     land_inc += 1
     print(name)
     print(deck)
@@ -84,7 +85,7 @@ def ask_card_name():
 def make_deck():
     deck = pd.DataFrame(columns = ['Name', 'Description', 'Type', 
                                    'Sub-type', 'Power', 'Toughness', 
-                                   'Commander', 'Mana_Cost', 'Color_Identity'])
+                                   'Commander', 'Mana_Cost', 'CMC', 'Color_Identity'])
     print(deck)
     print("Deck created successfully")
     return deck
@@ -121,10 +122,11 @@ def add_commander_to_deck(card_index):
     toughness = df.at[card_index, 'toughness']
     commander = True
     mana_cost = df.at[card_index, 'manaCost']
+    converted_mana_cost = df.at[card_index, 'convertedManaCost']
     color_identity = df.at[card_index, 'colorIdentity']
     deck.loc[0, ['Name', 'Description', 'Type', 'Sub-type',
-                 'Power', 'Toughness', 'Commander', 'Mana_Cost',
-                 'Color_Identity']] = [name, description, type, card_type, power, toughness,commander, mana_cost, color_identity]
+                 'Power', 'Toughness', 'Commander', 'Mana_Cost', 'CMC',
+                 'Color_Identity']] = [name, description, type, card_type, power, toughness,commander, mana_cost, converted_mana_cost, color_identity]
     #print(name, description, type, card_type, color_identity, commander, mana_cost, power, toughness)
     print(deck)
     return color_identity
@@ -274,10 +276,11 @@ def add_card(card_index, card_inc):
     toughness = df.at[card_index, 'toughness']
     commander = False
     mana_cost = df.at[card_index, 'manaCost']
+    converted_mana_cost = df.at[card_index, 'convertedManaCost']
     color_identity = df.at[card_index, 'colorIdentity']
     deck.loc[index_slot, ['Name', 'Description', 'Type', 'Sub-type',
-                 'Power', 'Toughness', 'Commander', 'Mana_Cost',
-                 'Color_Identity']] = [name, description, type, card_type, power, toughness,commander, mana_cost, color_identity]
+                 'Power', 'Toughness', 'Commander', 'Mana_Cost', 'CMC', 
+                 'Color_Identity']] = [name, description, type, card_type, power, toughness,commander, mana_cost, converted_mana_cost, color_identity]
     card_inc += 1
     #print(name, description, type, card_type, color_identity, commander, mana_cost, power, toughness)
     print(deck)
