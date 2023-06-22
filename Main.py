@@ -23,6 +23,7 @@ def name_deck():
 ## what type of deck
 def commander():
     commander_name = input("Enter your commander's name: ")
+    commander_name = card_exists(commander_name)
     card_index = get_card_index(commander_name)
     card_index =check_legendary(card_index)
     # commander_name = commander_checks(commander_name)
@@ -36,9 +37,7 @@ def check_legendary(card_index):
     else:
         print("Please enter a Legendary Creature")
         card_index = commander()
-    #if (((df['supertypes'].loc[df["name"] == card_name]) == "Legendary").any()) == True:
 
-    #else:
 
     
        
@@ -55,12 +54,12 @@ def card_name():
 
 ## check if card exists
 def card_exists(card_name):
-    if ((card_name in df["name"].values) == True):
+    if ((card_name in df_search["name"].values) == True):
         print(card_name, " exists")
-        return card_name
     else:
         print(card_name, " does not exist")
-        ask_card_name()
+        card_name = ask_card_name()
+    return card_name    
         
     
 ## add card to deck
@@ -89,7 +88,7 @@ def add_land_to_deck(card_index, land_inc):
 def ask_card_name():
     card_name = input("What card would you like to add to your deck: ")
     ##check if card exists
-    card_exists(card_name)
+    card_name = card_exists(card_name)
     return card_name
     
 
@@ -119,7 +118,7 @@ def valid_choice(choice):
         main_menu()
 
 def get_card_index(card_name):
-    card_index = df_search.index[df_search['name'] == card_name].item()
+    card_index = (df_search.index[df_search['name'] == card_name]).item()
     print(card_index)
     return card_index
 
@@ -139,12 +138,12 @@ def add_commander_to_deck(card_index):
     deck.loc[0, ['Name', 'Description', 'Type', 'Sub-type',
                  'Power', 'Toughness', 'Commander', 'Mana_Cost', 'CMC',
                  'Color_Identity']] = [name, description, type, card_type, power, toughness,commander, mana_cost, converted_mana_cost, color_identity]
-    #print(name, description, type, card_type, color_identity, commander, mana_cost, power, toughness)
     print(deck)
     return color_identity
     
 def add_nonbasic_lands(land_inc):
     card_name = input('Enter a non-basic land card name.(lowercase no commas)')
+    card_name = card_exists(card_name)
     card_index = get_card_index(card_name)
     is_basic = check_non_basic(card_index)
     color_match = check_color_identity(card_index)
@@ -168,7 +167,6 @@ def check_non_basic(card_index):
     is_land = df.at[card_index, 'type']
     if type != 'Basic' and 'Land' in is_land:
         is_basic = False
-        # add_land_to_deck(card_index, land_count)
     else:
         is_basic = True
     return is_basic
@@ -184,32 +182,35 @@ def check_color_identity(card_index):
        else:
            print('card identity not within the color identity of your commander')
            color_match = False
-           #add_nonbasic_lands(land_inc)
     return color_match
     
 def land_menu():
     print("Which basic land would you like to start with?")
     if 'G' in color_identity_check:
-        print("Forest")
+        print("forest")
     if 'B' in color_identity_check:
-        print("Swamp")
+        print("swamp")
     if 'W' in color_identity_check:
-        print('Plains')
+        print('plains')
     if 'U' in color_identity_check:
-        print('Island')
+        print('island')
     if 'R' in color_identity_check:
         print('Mountain')
     print('Wastes')
     
 def check_land_name(land_name):
-    valid_lands = ['Mountain', 'Wastes', 'Island', 'Swamp',
-                   'Plains', 'Forest']
+    valid_lands = ['mountain', 'wastes', 'island', 'swamp',
+                   'plains', 'forest']
     if land_name in valid_lands:
         print('Valid choice')
+        return land_name
     else:
         print('Please select a valid choice')
-        add_basic_lands()
-    return land_name
+        land_name = ask_card_name()
+        land_name = check_land_name(land_name)
+        return land_name
+        
+    
  
 def check_number_of_lands():
     number_to_add = input("how many of this basic land would you like to add")
@@ -229,12 +230,9 @@ def loop_in_lands(land_index, number_to_add, land_inc):
     return land_inc
     
 def check_land_count(land_inc):
-    if land_inc != land_count:
-        print('You are only running {} lands'.format(land_inc))
-        print('You originally wanted to add {} lands'.format(land_count))
-        repeat = input('would you like to add more lands? (y/n')
-    else:
-        repeat = 'n'
+    print('You are running {} lands'.format(land_inc))
+    print('You originally wanted to add {} lands'.format(land_count))
+    repeat = input('would you like to add more lands? (y/n')
     if repeat == 'y':
         land_option = input('basic or nonbasic?')
         if land_option == 'basic':
@@ -245,10 +243,11 @@ def check_land_count(land_inc):
             print("Please select a valid option")
             check_land_count(land_inc)
     elif repeat == 'n':
-        return
+        return land_inc
     else:
         print("Please select a valid option")
-        check_land_count(land_inc)
+        land_inc = check_land_count(land_inc)
+        return land_inc
         
             
 def ask_for_more_lands(land_inc):
@@ -257,7 +256,7 @@ def ask_for_more_lands(land_inc):
         land_inc = add_basic_lands(land_inc)
     else:
         land_inc = check_land_count(land_inc)
-    return land_inc
+        return land_inc
       
     
 
@@ -266,6 +265,7 @@ def add_basic_lands(land_inc):
     land_menu()
     land_name = input('Enter a name from the list of basic lands available')
     valid_land_name = check_land_name(land_name)
+    print(valid_land_name)
     land_index = get_card_index(valid_land_name)
     number_to_add = check_number_of_lands()
     land_inc = loop_in_lands(land_index, number_to_add, land_inc)
@@ -294,7 +294,6 @@ def add_card(card_index, card_inc):
                  'Power', 'Toughness', 'Commander', 'Mana_Cost', 'CMC', 
                  'Color_Identity']] = [name, description, type, card_type, power, toughness,commander, mana_cost, converted_mana_cost, color_identity]
     card_inc += 1
-    #print(name, description, type, card_type, color_identity, commander, mana_cost, power, toughness)
     print(deck)
     return card_inc
    
@@ -308,8 +307,8 @@ def check_if_unique(card_index):
         return already_exists
        
 def add_card_to_deck(card_inc):
-    name = ask_card_name()
-    card_index = get_card_index(name)
+    card_name = ask_card_name()
+    card_index = get_card_index(card_name)
     already_exists = check_if_unique(card_index)
     color_match = check_color_identity(card_index)
     if already_exists == False and color_match == True and card_inc < deck_size:
@@ -350,7 +349,7 @@ if choice == "1":
     land_inc = add_basic_lands(xyz)
     card_inc = deck.index[-1].item()
     print(card_inc)
-    print("you have {} card slots remaining for the rest of your deck.".format(deck_size))
+    print("you have {} card slots remaining for the rest of your deck.".format(99-card_inc))
     card_inc = add_card_to_deck(card_inc)
     create_csv()
     
