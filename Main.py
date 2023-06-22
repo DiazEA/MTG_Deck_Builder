@@ -2,9 +2,15 @@ import pandas as pd
 import csv
 import pathlib
 from pathlib import Path
+import pdb
 
 df = pd.read_csv("cards_updated.csv", sep = ",")
 df['colorIdentity'] = df['colorIdentity'].fillna('C')
+df_search = df[['UID', 'name']].copy()
+df_search['name'] = df_search['name'].str.lower().replace(",",'', regex = True)
+df_search.set_index("UID", inplace = True)
+print(df_search)
+print(df)
 
 ## ask for user name
 def user_name():
@@ -17,17 +23,23 @@ def name_deck():
 ## what type of deck
 def commander():
     commander_name = input("Enter your commander's name: ")
-    commander_name = commander_checks(commander_name)
-    return commander_name
+    card_index = get_card_index(commander_name)
+    card_index =check_legendary(card_index)
+    # commander_name = commander_checks(commander_name)
+    return card_index
     
 ##check if the commander is legendary
-def check_legendary(card_name):
-    if (((df['supertypes'].loc[df["name"] == card_name]) == "Legendary").any()) == True:
+def check_legendary(card_index):
+    if df.at[card_index, 'supertypes'] == "Legendary":
         print("Commander is a Legendary Creature")
-        return card_name
+        return card_index
     else:
-        print("Please enter a Legendary Creature as your commander")
-        commander()
+        print("Please enter a Legendary Creature")
+        card_index = commander()
+    #if (((df['supertypes'].loc[df["name"] == card_name]) == "Legendary").any()) == True:
+
+    #else:
+
     
        
 ## check if commander exists
@@ -107,7 +119,7 @@ def valid_choice(choice):
         main_menu()
 
 def get_card_index(card_name):
-    card_index = df.index[df['name'] == card_name].item()
+    card_index = df_search.index[df_search['name'] == card_name].item()
     print(card_index)
     return card_index
 
@@ -132,7 +144,7 @@ def add_commander_to_deck(card_index):
     return color_identity
     
 def add_nonbasic_lands(land_inc):
-    card_name = input('Enter a non-basic land card name.')
+    card_name = input('Enter a non-basic land card name.(lowercase no commas)')
     card_index = get_card_index(card_name)
     is_basic = check_non_basic(card_index)
     color_match = check_color_identity(card_index)
@@ -154,7 +166,7 @@ def add_nonbasic_lands(land_inc):
 def check_non_basic(card_index):
     type = df.at[card_index, 'supertypes']
     is_land = df.at[card_index, 'type']
-    if type != 'Basic' and is_land == 'Land':
+    if type != 'Basic' and 'Land' in is_land:
         is_basic = False
         # add_land_to_deck(card_index, land_count)
     else:
@@ -226,9 +238,9 @@ def check_land_count(land_inc):
     if repeat == 'y':
         land_option = input('basic or nonbasic?')
         if land_option == 'basic':
-            add_basic_lands(land_inc)
+            land_inc = add_basic_lands(land_inc)
         elif land_option == 'nonbasic':
-            add_nonbasic_lands(land_inc)
+            land_inc = add_nonbasic_lands(land_inc)
         else:
             print("Please select a valid option")
             check_land_count(land_inc)
@@ -326,8 +338,7 @@ land_inc = 0 #incramenter to count lands
 
 if choice == "1":
     deck = make_deck()
-    commander_name = commander()
-    card_index = get_card_index(commander_name)
+    card_index = commander()
     deck_color_identity = add_commander_to_deck(card_index)
     color_identity_check = color_identity_to_list()
     color_identity_check.append('C')
