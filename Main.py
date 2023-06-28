@@ -111,7 +111,7 @@ def main_menu():
     return choice
     
 def valid_choice(choice):
-    if choice == "1":
+    if choice == "1" or choice == "2":
         return choice
     else:
         print("Please select a valid option.")
@@ -327,7 +327,29 @@ def create_csv():
     deck_name = input('Enter the name of the deck')
     print('exporting to csv file...')
     deck.to_csv('{}.csv'.format(deck_name))
-       
+    
+def count_colors():
+    i = 0
+    white, blue, black, green, red = 0 , 0 , 0 , 0 , 0
+    while i<99:
+        deck['Mana_Cost'] = deck['Mana_Cost'].astype(str)
+        if deck.at[i, 'Mana_Cost'] == 'NaN':
+            i += 1
+        else:
+            white += deck.at[i, 'Mana_Cost'].count('W')
+            blue += deck.at[i, 'Mana_Cost'].count('U')
+            black += deck.at[i, 'Mana_Cost'].count('B')
+            green += deck.at[i, 'Mana_Cost'].count('G')
+            red += deck.at[i, 'Mana_Cost'].count('R') 
+            i+= 1
+    print(white, red, green, blue, black)
+            
+def load_deck():
+    deck_name = input('please enter the name of the deck you want to load')
+    deck = pd.read_csv('{}.csv'.format(deck_name))
+    return deck   
+
+
  
 choice = main_menu()
 
@@ -355,7 +377,11 @@ if choice == "1":
     
     
     
+elif choice == '2':
+    deck = load_deck()
+    print(deck)
+    count_colors()
+    
 else:
     print("working on it")
-    
-    
+       
