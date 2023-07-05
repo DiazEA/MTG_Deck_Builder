@@ -342,14 +342,43 @@ def count_colors():
             green += deck.at[i, 'Mana_Cost'].count('G')
             red += deck.at[i, 'Mana_Cost'].count('R') 
             i+= 1
-    print(white, red, green, blue, black)
+    color_intensity_list = [white, blue, black, green, red]
+    print(color_intensity_list)
+    return color_intensity_list
             
 def load_deck():
     deck_name = input('please enter the name of the deck you want to load')
     deck = pd.read_csv('{}.csv'.format(deck_name))
     return deck   
 
+def land_production():
+    deck['Description'] = deck['Description'].astype(str)
+    i = 0
+    makes_white, makes_blue, makes_black, makes_green, makes_red = 0,0,0,0,0
+    while i < 99:
+        if deck.at[i, 'Sub-type'] == 'Land':
+            makes_white += deck.at[i, 'Description'].count('W')
+            makes_blue += deck.at[i, 'Description'].count('U')
+            makes_black += deck.at[i, 'Description'].count('B')
+            makes_green += deck.at[i, 'Description'].count('G')
+            makes_red += deck.at[i, 'Description'].count('R')
+            i += 1
+        else:
+            i += 1
+    land_produces_list = [makes_white, makes_blue, 
+                          makes_black, makes_green, makes_red]
+    print(land_produces_list)
+    return land_produces_list
 
+def make_color_dframe(color_intensity_list, land_produces_list):
+    color_df = pd.DataFrame(columns = ['color', 'intensity', 'land_production'])
+    color_df['color'] = ['White', 'Blue', 'Black', 'Green', 'Red']
+    color_df['intensity'] = color_intensity_list
+    color_df['land_production'] = land_produces_list
+    color_df.set_index('color')
+    print(color_df)
+    return color_df
+    
  
 choice = main_menu()
 
@@ -380,7 +409,10 @@ if choice == "1":
 elif choice == '2':
     deck = load_deck()
     print(deck)
-    count_colors()
+    color_intensity_list = count_colors()
+    land_produces_list = land_production()
+    color_df = make_color_dframe(color_intensity_list, land_produces_list)
+    create_csv()
     
 else:
     print("working on it")
