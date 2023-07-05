@@ -412,6 +412,7 @@ elif choice == '2':
     color_intensity_list = count_colors()
     land_produces_list = land_production()
     color_df = make_color_dframe(color_intensity_list, land_produces_list)
+    create_csv()
     
 else:
     print("working on it")
