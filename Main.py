@@ -9,8 +9,6 @@ df['colorIdentity'] = df['colorIdentity'].fillna('C')
 df_search = df[['UID', 'name']].copy()
 df_search['name'] = df_search['name'].str.lower().replace(",",'', regex = True)
 df_search.set_index("UID", inplace = True)
-print(df_search)
-print(df)
 
 ## ask for user name
 def user_name():
@@ -378,7 +376,22 @@ def make_color_dframe(color_intensity_list, land_produces_list):
     color_df.set_index('color')
     print(color_df)
     return color_df
+
+def create_excel_file():
+    file_name = input("Enter the name of the deck")
+    with pd.ExcelWriter("{}.xlsx".format(file_name)) as writer:
+        deck.to_excel(writer, sheet_name = 'Sheet_name_1')
+        color_df.to_excel(writer, sheet_name = 'Sheet_name_2')
+    #deck.to_excel('{}.xlsx'.format(file_name), sheet_name = 'Sheet_name_1')   
+
+def color_to_excel():
+    color_df.to_excel('deck_color_data.xlsx', sheet_name = 'Sheet_name_2')
     
+def deck_color_data():
+    color_intensity_list = count_colors()
+    land_produces_list = land_production()
+    color_df = make_color_dframe(color_intensity_list, land_produces_list)
+    return color_df
  
 choice = main_menu()
 
@@ -402,7 +415,9 @@ if choice == "1":
     print(card_inc)
     print("you have {} card slots remaining for the rest of your deck.".format(99-card_inc))
     card_inc = add_card_to_deck(card_inc)
-    create_csv()
+    color_df = deck_color_data()
+    create_excel_file()
+    #create_csv()
     
     
     
@@ -412,7 +427,7 @@ elif choice == '2':
     color_intensity_list = count_colors()
     land_produces_list = land_production()
     color_df = make_color_dframe(color_intensity_list, land_produces_list)
-    create_csv()
+    create_excel_file()
     
 else:
     print("working on it")
