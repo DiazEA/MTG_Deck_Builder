@@ -4,7 +4,7 @@ import pathlib
 from pathlib import Path
 import pdb
 
-df = pd.read_csv("cards_updated.csv", sep = ",")
+df = pd.read_csv("cards_updated_7_23.csv", sep = ",")
 df['colorIdentity'] = df['colorIdentity'].fillna('C')
 df_search = df[['UID', 'name']].copy()
 df_search['name'] = df_search['name'].str.lower().replace(",",'', regex = True)
@@ -71,14 +71,12 @@ def add_land_to_deck(card_index, land_inc):
     toughness = df.at[card_index, 'toughness']
     commander = False
     mana_cost = df.at[card_index, 'manaCost']
-    converted_mana_cost = df.at[card_index, 'convertedManaCost']
+    converted_mana_cost = df.at[card_index, 'manaValue']
     color_identity = df.at[card_index, 'colorIdentity']
     deck.loc[index_slot, ['Name', 'Description', 'Type', 'Sub-type',
                  'Power', 'Toughness', 'Commander', 'Mana_Cost', "CMC",
                  'Color_Identity']] = [name, description, type, card_type, power, toughness,commander, mana_cost, converted_mana_cost, color_identity]
     land_inc += 1
-    print(name)
-    print(deck)
     return land_inc
     
 
@@ -131,7 +129,7 @@ def add_commander_to_deck(card_index):
     toughness = df.at[card_index, 'toughness']
     commander = True
     mana_cost = df.at[card_index, 'manaCost']
-    converted_mana_cost = df.at[card_index, 'convertedManaCost']
+    converted_mana_cost = df.at[card_index, 'manaValue']
     color_identity = df.at[card_index, 'colorIdentity']
     deck.loc[0, ['Name', 'Description', 'Type', 'Sub-type',
                  'Power', 'Toughness', 'Commander', 'Mana_Cost', 'CMC',
@@ -147,6 +145,7 @@ def add_nonbasic_lands(land_inc):
     color_match = check_color_identity(card_index)
     if is_basic == False and land_inc < land_count and color_match == True:
         land_inc = add_land_to_deck(card_index, land_inc)
+        print(deck)
         ask_for_more_lands = input("Add another non-basic Land card? y/n:")
         print(land_inc)
         if ask_for_more_lands == 'y':
@@ -184,6 +183,7 @@ def check_color_identity(card_index):
     
 def land_menu():
     print("Which basic land would you like to start with?")
+    print(color_identity_check)
     if 'G' in color_identity_check:
         print("forest")
     if 'B' in color_identity_check:
@@ -286,7 +286,7 @@ def add_card(card_index, card_inc):
     toughness = df.at[card_index, 'toughness']
     commander = False
     mana_cost = df.at[card_index, 'manaCost']
-    converted_mana_cost = df.at[card_index, 'convertedManaCost']
+    converted_mana_cost = df.at[card_index, 'manaValue']
     color_identity = df.at[card_index, 'colorIdentity']
     deck.loc[index_slot, ['Name', 'Description', 'Type', 'Sub-type',
                  'Power', 'Toughness', 'Commander', 'Mana_Cost', 'CMC', 
